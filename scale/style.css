@@ -1,0 +1,56 @@
+.insert {
+    border: 1px dashed rgb(68, 68, 68);
+    background: rgba(0, 0, 255, .1);
+}
+
+.left_top {
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    background-color: white;
+    border: 1px solid rgb(119, 119, 119);
+    box-sizing: border-box;
+    opacity: 0.8;
+    cursor: nwse-resize;
+    left: -6px;
+    top: -6px;
+}
+
+.right_top {
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    background-color: white;
+    border: 1px solid rgb(119, 119, 119);
+    box-sizing: border-box;
+    opacity: 0.8;
+    cursor: nesw-resize;
+    right: -6px;
+    top: -6px;
+}
+
+.left_bottom {
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    background-color: white;
+    border: 1px solid rgb(119, 119, 119);
+    box-sizing: border-box;
+    opacity: 0.8;
+    cursor: nesw-resize;
+    left: -6px;
+    bottom: -6px;
+}
+
+.right_bottom {
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    background-color: white;
+    border: 1px solid rgb(119, 119, 119);
+    box-sizing: border-box;
+    opacity: 0.8;
+    cursor: nwse-resize;
+    right: -6px;
+    bottom: -6px;
+}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        img {
+            user-select: none;
+            margin: 40px;
+            padding: 40px;
+            box-sizing: border-box;
+            vertical-align: top;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <img src="portrait.jpg" alt=""> -->
+    <img src="portrait.jpg" alt="">
+
+    <script>
+        HTMLElement.prototype.css = function (opts) {
+            if (/Object/.test(Object.prototype.toString.call(opts))) {
+                for (let key in opts) {
+                    opts[key] && (this.style[key] = opts[key].toString())
+                }
+            }
+        };
+        class Scale {
+            constructor() {
+                this.body = document.body;
+                this.init()
+            }
+            init() {
+                this.container = document.createElement('div');
+                const imgs = document.querySelectorAll('img');
+                imgs.forEach((item, index) => {
+                    item.addEventListener('click', (e) => {
+                        const target = (e = e || window.event).target || e.srcElement;
+                        this.target = target;
+                        this.imgPos = {
+                            paddingLeft: this.extNumber(this.getStyle(target, 'padding-left')),
+                            paddingRight: this.extNumber(this.getStyle(target, 'padding-right')),
+                            paddingTop: this.extNumber(this.getStyle(target, 'padding-top')),
+                            paddingBottom: this.extNumber(this.getStyle(target, 'padding-bottom'))
+                        }
+                        this.container.classList.add('insert');
+                        this.container.innerHTML = `<div class="left_top"></div><div class="right_top"></div><div class="left_bottom"></div><div class="right_bottom"></div>`;
+                        this.container.css({
+                            position: 'absolute',
+                            left: this.addPX(target.offsetLeft),
+                            top: this.addPX(target.offsetTop),
+                            width: this.addPX(target.width + this.imgPos.paddingLeft + this.imgPos.paddingRight),
+                            height: this.addPX(target.height + this.imgPos.paddingTop + this.imgPos.paddingBottom)
+                        })
+                        this.body.appendChild(this.container)
+                        this.evevt()
+                    })
+                })
+            }
+            mouseMove(...args) {
+                const result = () => {
+                    switch (args[1]) {
+                        case 'lt':
+                            return this.addPX(args[0] - (args[2].pageX - this.GBCR(this.container).left));
+                            break;
+                        case 'lb':
+                            return this.addPX(args[0] - (args[2].pageX - this.GBCR(this.container).left));
+                            break;
+                        case 'rt':
+                            return this.addPX(args[2].pageX - this.GBCR(this.container).left);
+                            break;
+                        case 'rb':
+                            return this.addPX(args[2].pageX - this.GBCR(this.container).left);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                this.target.style.width = this.container.style.width = this.container.style.height = result();
+            }
+            evevt() {
+                const leftTopItem = document.querySelector('.left_top');
+                const rightBottomItem = document.querySelector('.right_bottom');
+                const rightTopItem = document.querySelector('.right_top');
+                const leftBottomItem = document.querySelector('.left_bottom');
+                const removeEvevt = () => {
+                    this.body.removeEventListener("mousemove", this.moveEvevt);
+                    this.container.style.cursor = '';
+                }
+                const leftTopAndRightBottom = (el, elName) => {
+                    el.addEventListener('mousedown', (e) => {
+                        let divWidth = this.extNumber(this.getStyle(this.container, 'width'));
+                        let args = [divWidth, elName];
+                        let cursor = '';
+                        if (elName === 'rt' || elName === 'lb') {
+                            cursor = 'nesw-resize'
+                        }
+                        if (elName === 'lt' || elName === 'rb') {
+                            cursor = 'nwse-resize'
+                        }
+                        this.moveEvevt = this.mouseMove.bind(this, ...args);
+                        this.container.style.cursor = cursor;
+                        this.body.addEventListener("mousemove", this.moveEvevt)
+                    })
+                }
+                leftTopAndRightBottom(leftTopItem, 'lt')
+                leftTopAndRightBottom(leftBottomItem, 'lb')
+                leftTopAndRightBottom(rightTopItem, 'rt')
+                leftTopAndRightBottom(rightBottomItem, 'rb')
+
+                leftTopItem.addEventListener("mouseup", removeEvevt);
+                leftBottomItem.addEventListener("mouseup", removeEvevt);
+                rightTopItem.addEventListener("mouseup", removeEvevt);
+                rightBottomItem.addEventListener("mouseup", removeEvevt);
+
+                this.body.addEventListener("mouseup", removeEvevt);
+            }
+            extNumber(str) {
+                return str.replace(/[^0-9]/ig, "") * 1
+            }
+            addPX(number) {
+                return `${number}px`
+            }
+            getStyle(obj, attr) {
+                return obj.currentStyle ? obj.currentStyle[attr] : document.defaultView.getComputedStyle(obj, null)[attr]
+            }
+            GBCR(obj) {
+                return obj.getBoundingClientRect()
+            }
+            inverse(number) {
+                return - number || 0
+            }
+        }
+        new Scale
+    </script>
+</body>
+
+</html>
