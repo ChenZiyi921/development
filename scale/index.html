@@ -74,22 +74,23 @@
                 const result = () => {
                     switch (args[1]) {
                         case 'lt':
-                            return this.addPX(args[0] - (args[2].pageX - this.GBCR(this.container).left));
+                            return args[0] - (args[2].pageX - this.GBCR(this.container).left)
                             break;
                         case 'lb':
-                            return this.addPX(args[0] - (args[2].pageX - this.GBCR(this.container).left));
+                            return args[0] - (args[2].pageX - this.GBCR(this.container).left)
                             break;
                         case 'rt':
-                            return this.addPX(args[2].pageX - this.GBCR(this.container).left);
+                            return args[2].pageX - this.GBCR(this.container).left
                             break;
                         case 'rb':
-                            return this.addPX(args[2].pageX - this.GBCR(this.container).left);
+                            return args[2].pageX - this.GBCR(this.container).left
                             break;
                         default:
                             break;
                     }
                 }
-                this.target.style.width = this.container.style.width = this.container.style.height = result();
+                if (result() < 20) return
+                this.target.style.width = this.container.style.width = this.container.style.height = this.addPX(result());
             }
             evevt() {
                 const leftTopItem = document.querySelector('.left_top');
@@ -100,7 +101,7 @@
                     this.body.removeEventListener("mousemove", this.moveEvevt);
                     this.container.style.cursor = '';
                 }
-                const leftTopAndRightBottom = (el, elName) => {
+                const buttonEvevt = (el, elName) => {
                     el.addEventListener('mousedown', (e) => {
                         let divWidth = this.extNumber(this.getStyle(this.container, 'width'));
                         let args = [divWidth, elName];
@@ -116,10 +117,10 @@
                         this.body.addEventListener("mousemove", this.moveEvevt)
                     })
                 }
-                leftTopAndRightBottom(leftTopItem, 'lt')
-                leftTopAndRightBottom(leftBottomItem, 'lb')
-                leftTopAndRightBottom(rightTopItem, 'rt')
-                leftTopAndRightBottom(rightBottomItem, 'rb')
+                buttonEvevt(leftTopItem, 'lt')
+                buttonEvevt(leftBottomItem, 'lb')
+                buttonEvevt(rightTopItem, 'rt')
+                buttonEvevt(rightBottomItem, 'rb')
 
                 leftTopItem.addEventListener("mouseup", removeEvevt);
                 leftBottomItem.addEventListener("mouseup", removeEvevt);
