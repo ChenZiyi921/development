@@ -78,8 +78,8 @@
                         item.classList.add('item');
                         item.css({
                             position: 'absolute',
-                            left: `${this.sx - this.containerAttr.paddingLeft - this.containerAttr.marginLeft}px`,
-                            top: `${this.sy - this.containerAttr.paddingTop - this.containerAttr.marginTop}px`,
+                            left: `${((this.sx - this.containerAttr.paddingLeft - this.containerAttr.marginLeft) / this.container.offsetWidth * 100).toFixed(2)}%`,
+                            top: `${((this.sy - this.containerAttr.paddingTop - this.containerAttr.marginTop) / this.container.offsetHeight * 100).toFixed(2)}%`,
                             width: '10px',
                             height: '10px',
                             border: '1px solid #ccc',
@@ -88,11 +88,11 @@
                         targetFocus(item)
                         this.container.appendChild(item)
                         this.start()
-                        this.end([document.querySelector('.right_bottom'), this.container])
+                        this.end([document.querySelector('.right_bottom'), this.container, this.body])
                     } else if (/item/.test(target.classList)) {
                         targetFocus(target)
                         this.start()
-                        this.end([document.querySelector('.right_bottom'), this.container])
+                        this.end([document.querySelector('.right_bottom'), this.container, this.body])
                     }
                 })
             }
