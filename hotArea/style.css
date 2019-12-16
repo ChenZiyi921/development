@@ -73,7 +73,7 @@ a {
     text-decoration: none;
 }
 
-.app {
+#app {
     display: flex;
 }
 
@@ -92,22 +92,22 @@ a {
 }
 
 .active {
-    border: 1px solid #09f !important
+    border: 1px solid #2db7f5 !important
 }
 
 .setting {
     width: 600px;
     min-height: 100px;
     border: 1px solid #ccc;
-    margin: 20px;
+    margin: 20px 20px 20px 0;
     padding: 20px;
     box-sizing: border-box;
 }
 
 .setting .line {
     display: flex;
-    height: 36px;
-    line-height: 40px;
+    height: 32px;
+    line-height: 32px;
     align-items: center;
     margin: 4px 0;
     float: left;
@@ -115,7 +115,6 @@ a {
 
 .setting .line em {
     width: 80px;
-    padding-right: 20px;
 }
 
 .setting .line input {
@@ -128,10 +127,10 @@ a {
 
 .setting .line #save {
     display: block;
-    height: 34px;
-    line-height: 34px;
+    height: 32px;
+    line-height: 32px;
     padding: 0 20px;
-    background: #09f;
+    background: #2db7f5;
     border-radius: 4px;
     color: #fff;
 }

@@ -8,13 +8,24 @@
     <title></title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .delete {
+        #delete {
             display: block;
-            height: 34px;
-            line-height: 34px;
+            height: 32px;
+            line-height: 32px;
             margin-left: 10px;
             padding: 0 20px;
             background: #ed4014;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        #saveLink {
+            display: block;
+            height: 32px;
+            line-height: 32px;
+            margin-left: 10px;
+            padding: 0 20px;
+            background: #19be6b;
             border-radius: 4px;
             color: #fff;
         }
@@ -22,119 +33,16 @@
 </head>
 
 <body>
-    <div class="app">
+    <div id="app">
         <div class="container"><img src="back.png" alt=""></div>
         <div class="setting">
             <p class="line"><em>活动标识：</em><input type="text" /></p>
-            <p class="line"><em>链接地址：</em><input type="text" /><a class="delete" href="javascript:;">删除</a></p>
-            <p class="line" style="justify-content: flex-end;"><a id="save" href="javascript:;">保存</a></p>
+            <p class="line"><em>链接地址：</em><input type="text" id="linkAddress" /><a id="delete"
+                    href="javascript:;">删除</a><a id="saveLink" href="javascript:;">保存</a></p>
+            <p class="line" style="justify-content: flex-end;"><a id="save" href="javascript:;">创建</a></p>
         </div>
     </div>
-    <script>
-        HTMLElement.prototype.css = function (opts) {
-            if (/Object/.test(Object.prototype.toString.call(opts))) {
-                for (let key in opts) {
-                    opts[key] && (this.style[key] = opts[key].toString())
-                }
-            }
-        };
-        class HotArea {
-            constructor() {
-                this.body = document.body;
-                this.img = document.querySelector('img');
-                this.container = document.querySelector('.container');
-                this.sx, this.sy, this.mx, this.my, this.ex, this.ey;
-                this.moveEvevtObj = null;
-                this.config = {};
-                this.init()
-                this.addArea()
-            }
-            init() {
-                this.body.ondragstart = () => { return false }
-            }
-            addArea() {
-                this.container.addEventListener('mousedown', (e) => {
-                    const target = (e = e || window.event).target || e.srcElement;
-                    this.target = target;
-                    this.sx = e.pageX;
-                    this.sy = e.pageY;
-                    this.containerAttr = {
-                        paddingLeft: this.extNumber(this.getStyle(this.container, 'padding-left')),
-                        marginLeft: this.extNumber(this.getStyle(this.container, 'margin-left')),
-                        paddingTop: this.extNumber(this.getStyle(this.container, 'padding-top')),
-                        marginTop: this.extNumber(this.getStyle(this.container, 'margin-top'))
-                    }
-                    const targetFocus = (el) => {
-                        let globalItem = document.querySelectorAll('.item');
-                        globalItem && globalItem.forEach((current, index) => {
-                            current.classList.remove('active');
-                            current.innerHTML = '';
-                        })
-                        el.classList.add('active');
-                        el.innerHTML = `</div><div class="right_bottom"></div>`;
-                    }
-                    if (!/item|right_bottom/.test(target.classList)) {
-                        const item = document.createElement('div');
-                        item.classList.add('item');
-                        item.css({
-                            position: 'absolute',
-                            left: `${((this.sx - this.containerAttr.paddingLeft - this.containerAttr.marginLeft) / this.container.offsetWidth * 100).toFixed(2)}%`,
-                            top: `${((this.sy - this.containerAttr.paddingTop - this.containerAttr.marginTop) / this.container.offsetHeight * 100).toFixed(2)}%`,
-                            width: '10px',
-                            height: '10px',
-                            border: '1px solid #ccc',
-                            boxSizing: 'border-box'
-                        })
-                        targetFocus(item)
-                        this.container.appendChild(item)
-                        this.start()
-                        this.end([document.querySelector('.right_bottom'), this.container, this.body])
-                    } else if (/item/.test(target.classList)) {
-                        targetFocus(target)
-                        this.start()
-                        this.end([document.querySelector('.right_bottom'), this.container, this.body])
-                    }
-                })
-            }
-            start() {
-                let controlItem = document.querySelectorAll('.right_bottom')
-                if (controlItem) {
-                    controlItem.forEach((item, index) => {
-                        item.addEventListener('mousedown', () => {
-                            this.moveEvevtObj = this.move.bind(this);
-                            this.container.addEventListener('mousemove', this.moveEvevtObj)
-                        })
-                    })
-                }
-            }
-            move(e) {
-                let item = this.target.parentNode;
-                let itemWidth = ((e.pageX - this.GBCR(item).left) / this.container.offsetWidth * 100).toFixed(2);
-                let itemHeight = ((e.pageY - this.GBCR(item).top) / this.container.offsetHeight * 100).toFixed(2);
-                if (!/item/.test(item.classList) || itemWidth > 100 || e.pageX > this.GBCR(this.container).right) return;
-                if (itemHeight > 100 || e.pageY > this.GBCR(this.container).bottom) return;
-                item.style.width = itemWidth + '%';
-                item.style.height = itemHeight + '%';
-            }
-            end(arg) {
-                arg.forEach((current, index) => {
-                    current.addEventListener('mouseup', (e) => {
-                        current.removeEventListener('mousemove', this.moveEvevtObj)
-                    })
-                })
-            }
-            extNumber(str) {
-                return str.replace(/[^0-9]/ig, "") * 1
-            }
-            getStyle(obj, attr) {
-                return obj.currentStyle ? obj.currentStyle[attr] : document.defaultView.getComputedStyle(obj, null)[attr]
-            }
-            GBCR(obj) {
-                return obj.getBoundingClientRect()
-            }
-        }
-        new HotArea
-    </script>
+    <script src="hotArea.js"></script>
 </body>
 
 </html>
