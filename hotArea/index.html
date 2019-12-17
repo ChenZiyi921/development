@@ -7,29 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title></title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        #delete {
-            display: block;
-            height: 32px;
-            line-height: 32px;
-            margin-left: 10px;
-            padding: 0 20px;
-            background: #ed4014;
-            border-radius: 4px;
-            color: #fff;
-        }
-
-        #saveLink {
-            display: block;
-            height: 32px;
-            line-height: 32px;
-            margin-left: 10px;
-            padding: 0 20px;
-            background: #19be6b;
-            border-radius: 4px;
-            color: #fff;
-        }
-    </style>
 </head>
 
 <body>
@@ -37,9 +14,15 @@
         <div class="container"><img src="back.png" alt=""></div>
         <div class="setting">
             <p class="line"><em>活动标识：</em><input type="text" /></p>
-            <p class="line"><em>链接地址：</em><input type="text" id="linkAddress" /><a id="delete"
-                    href="javascript:;">删除</a><a id="saveLink" href="javascript:;">保存</a></p>
-            <p class="line" style="justify-content: flex-end;"><a id="save" href="javascript:;">创建</a></p>
+            <p class="line"><em>链接地址：</em><input type="text" id="linkAddress" /></p>
+            <p class="line">
+                <em>宽度：</em>
+                <input type="text" id="width"/>
+                <em style="text-align: center;">高度：</em>
+                <input type="text" id="height" />
+                <a id="deleteLink" href="javascript:;">删除</a><a id="saveLink" href="javascript:;">保存</a>
+            </p>
+            <p class="line" style="justify-content: flex-end;"><a id="create" href="javascript:;">创建</a></p>
         </div>
     </div>
     <script src="hotArea.js"></script>

@@ -4,15 +4,62 @@ HTMLElement.prototype.css = function (opts) {
             opts[key] && (this.style[key] = opts[key].toString())
         }
     }
-};
-class HotArea {
+}
+
+function mix(...mixins) {
+    class Mix {
+        constructor() {
+            for (let mixin of mixins) {
+                copyProperties(this, new mixin());
+            }
+        }
+    }
+
+    for (let mixin of mixins) {
+        copyProperties(Mix, mixin);
+        copyProperties(Mix.prototype, mixin.prototype);
+    }
+
+    return Mix;
+}
+
+function copyProperties(target, source) {
+    for (let key of Reflect.ownKeys(source)) {
+        if (key !== 'constructor'
+            && key !== 'prototype'
+            && key !== 'name'
+        ) {
+            let desc = Object.getOwnPropertyDescriptor(source, key);
+            Object.defineProperty(target, key, desc);
+        }
+    }
+}
+
+class Main {
     constructor() {
+
+    }
+    extNumber(str) {
+        return str.replace(/[^0-9]/ig, "") * 1
+    }
+    getStyle(obj, attr) {
+        return obj.currentStyle ? obj.currentStyle[attr] : document.defaultView.getComputedStyle(obj, null)[attr]
+    }
+    GBCR(obj) {
+        return obj.getBoundingClientRect()
+    }
+}
+
+class HotArea extends Main {
+    constructor() {
+        super()
         this.body = document.body;
         this.img = document.querySelector('img');
         this.container = document.querySelector('.container');
-        this.saveLink = document.querySelector('#saveLink');
         this.linkAddress = document.querySelector('#linkAddress');
-        this.sx, this.sy, this.mx, this.my, this.ex, this.ey;
+        this.width = document.querySelector('#width');
+        this.height = document.querySelector('#height');
+        this.sx, this.sy;
         this.moveEvevtObj = null;
         this.config = [];
         this.linkIndex = 0;
@@ -36,17 +83,21 @@ class HotArea {
             }
             const targetFocus = (el) => {
                 let globalItem = document.querySelectorAll('.item');
-                globalItem && globalItem.forEach((current, index) => {
-                    current.classList.remove('active');
-                    current.innerHTML = '';
-                })
-                el.classList.add('active');
-                el.innerHTML = `<div class="right_bottom"></div>`;
-                for (let i = 0; i < globalItem.length; i++) {
-                    if (/active/.test(globalItem[i].classList)) {
-                        this.linkIndex = i
-                        this.linkAddress.value = this.config[i].link
-                        break
+                if (globalItem) {
+                    globalItem.forEach((current, index) => {
+                        current.classList.remove('active');
+                        current.innerHTML = '';
+                    })
+                    el.classList.add('active');
+                    el.innerHTML = `<div class="right_bottom"></div>`;
+                    for (let i = 0; i < globalItem.length; i++) {
+                        if (/active/.test(globalItem[i].classList)) {
+                            this.linkIndex = i;
+                            this.linkAddress.value = this.config[i].link;
+                            this.width.value = this.config[i].style.width;
+                            this.height.value = this.config[i].style.height;
+                            break
+                        }
                     }
                 }
             }
@@ -61,8 +112,8 @@ class HotArea {
                     boxSizing: 'border-box'
                 }
                 item.classList.add('item');
-                item.css(Object.assign({ border: '1px solid #ccc' }, domProps))
-                this.container.appendChild(item)
+                item.css(Object.assign({ border: '1px solid #ccc' }, domProps));
+                this.container.appendChild(item);
                 this.config.push({
                     link: '',
                     style: domProps
@@ -94,8 +145,8 @@ class HotArea {
         let itemHeight = ((e.pageY - this.GBCR(item).top) / this.container.offsetHeight * 100).toFixed(2);
         if (!/item/.test(item.classList) || itemWidth > 100 || e.pageX > this.GBCR(this.container).right) return;
         if (itemHeight > 100 || e.pageY > this.GBCR(this.container).bottom) return;
-        this.config[this.linkIndex].style.width = item.style.width = itemWidth + '%';
-        this.config[this.linkIndex].style.height = item.style.height = itemHeight + '%';
+        this.config[this.linkIndex].style.width = this.width.value = item.style.width = itemWidth + '%';
+        this.config[this.linkIndex].style.height = this.height.value = item.style.height = itemHeight + '%';
     }
     end(arg) {
         arg.forEach((current, index) => {
@@ -104,33 +155,37 @@ class HotArea {
             })
         })
     }
-    extNumber(str) {
-        return str.replace(/[^0-9]/ig, "") * 1
-    }
-    getStyle(obj, attr) {
-        return obj.currentStyle ? obj.currentStyle[attr] : document.defaultView.getComputedStyle(obj, null)[attr]
-    }
-    GBCR(obj) {
-        return obj.getBoundingClientRect()
-    }
 }
-// new HotArea
 
 class Setting extends HotArea {
     constructor() {
         super()
-        this.setLinks()
+        this.setLink()
+        this.deleteLink()
         this.saveConfig()
     }
-    setLinks() {
+    setLink() {
         const saveLink = document.querySelector('#saveLink');
         saveLink.addEventListener('click', () => {
-            this.config[this.linkIndex].link = this.linkAddress.value;
+            if (this.config != '') {
+                this.config[this.linkIndex].link = this.linkAddress.value;
+            }
+        })
+    }
+    deleteLink() {
+        const delLink = document.querySelector('#deleteLink');
+        delLink.addEventListener('click', () => {
+            if (this.config != '') {
+                let globalItem = document.querySelectorAll('.item');
+                document.querySelector('.container').removeChild(globalItem[this.linkIndex])
+                this.config.splice(this.linkIndex, 1)
+                this.linkAddress.value = '';
+            }
         })
     }
     saveConfig() {
-        const save = document.querySelector('#save');
-        save.addEventListener('click', () => {
+        const create = document.querySelector('#create');
+        create.addEventListener('click', () => {
             console.log(this.config)
         })
     }
