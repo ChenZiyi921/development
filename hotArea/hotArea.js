@@ -40,7 +40,7 @@ class Main {
 
     }
     extNumber(str) {
-        return str.replace(/[^0-9]/ig, "") * 1
+        return str.replace(/[^\d.]/g, '') * 1
     }
     getStyle(obj, attr) {
         return obj.currentStyle ? obj.currentStyle[attr] : document.defaultView.getComputedStyle(obj, null)[attr]
@@ -108,11 +108,10 @@ class HotArea extends Main {
                     left: `${((this.sx - this.containerAttr.paddingLeft - this.containerAttr.marginLeft) / this.container.offsetWidth * 100).toFixed(2)}%`,
                     top: `${((this.sy - this.containerAttr.paddingTop - this.containerAttr.marginTop) / this.container.offsetHeight * 100).toFixed(2)}%`,
                     width: '10px',
-                    height: '10px',
-                    boxSizing: 'border-box'
+                    height: '10px'
                 }
                 item.classList.add('item');
-                item.css(Object.assign({ border: '1px solid #ccc' }, domProps));
+                item.css(Object.assign({ border: '1px solid #ccc', boxSizing: 'border-box' }, domProps));
                 this.container.appendChild(item);
                 this.config.push({
                     link: '',
@@ -120,11 +119,11 @@ class HotArea extends Main {
                 });
                 targetFocus(item)
                 this.start()
-                this.end([document.querySelector('.right_bottom'), this.container, this.body])
+                this.removeEvent([this.container, this.body])
             } else if (/item/.test(target.classList)) {
                 targetFocus(target)
                 this.start()
-                this.end([document.querySelector('.right_bottom'), this.container, this.body])
+                this.removeEvent([this.container, this.body])
             }
         })
     }
@@ -148,10 +147,10 @@ class HotArea extends Main {
         this.config[this.linkIndex].style.width = this.width.value = item.style.width = itemWidth + '%';
         this.config[this.linkIndex].style.height = this.height.value = item.style.height = itemHeight + '%';
     }
-    end(arg) {
+    removeEvent(arg) {
         arg.forEach((current, index) => {
             current.addEventListener('mouseup', (e) => {
-                current.removeEventListener('mousemove', this.moveEvevtObj)
+                this.container.removeEventListener('mousemove', this.moveEvevtObj)
             })
         })
     }
@@ -160,20 +159,22 @@ class HotArea extends Main {
 class Setting extends HotArea {
     constructor() {
         super()
-        this.setLink()
-        this.deleteLink()
+        this.saveHandler()
+        this.deleteHandler()
         this.saveConfig()
+
+        this.domPropsChange()
     }
-    setLink() {
-        const saveLink = document.querySelector('#saveLink');
-        saveLink.addEventListener('click', () => {
+    saveHandler() {
+        const save = document.querySelector('#save');
+        save.addEventListener('click', () => {
             if (this.config != '') {
                 this.config[this.linkIndex].link = this.linkAddress.value;
             }
         })
     }
-    deleteLink() {
-        const delLink = document.querySelector('#deleteLink');
+    deleteHandler() {
+        const delLink = document.querySelector('#delete');
         delLink.addEventListener('click', () => {
             if (this.config != '') {
                 let globalItem = document.querySelectorAll('.item');
@@ -188,6 +189,24 @@ class Setting extends HotArea {
         create.addEventListener('click', () => {
             console.log(this.config)
         })
+    }
+    domPropsChange() {
+        const factoryConfig = attrArgs => {
+            attrArgs.forEach((current, index) => {
+                this[current].addEventListener('input', (e) => {
+                    const target = (e = e || window.event).target || e.srcElement;
+                    for (let i = 0; i < this.config.length; i++) {
+                        if (i == this.linkIndex) {
+                            this.config[i].style[current] = `${this.extNumber(target.value)}%`;
+                            document.querySelectorAll('.item')[this.linkIndex].style[current] = `${this.extNumber(target.value)}%`;
+                            console.log(this.config[i])
+                            break
+                        }
+                    }
+                })
+            })
+        }
+        factoryConfig(['width', 'height'])
     }
 }
 

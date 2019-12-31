@@ -126,7 +126,7 @@ a {
   box-sizing: border-box;
 }
 
-#deleteLink {
+#delete {
   display: block;
   height: 32px;
   line-height: 32px;
@@ -137,7 +137,7 @@ a {
   color: #fff;
 }
 
-#saveLink {
+#save {
   display: block;
   height: 32px;
   line-height: 32px;
